@@ -68,9 +68,9 @@ class TFRecordDataPipeline(InputPipelineCore):
         super().__init__(batch_size, sample_count, device, 
                          build_now=False, threads=threads)
         if device is None:
-            self._device = 'cpu' 
+            self._hardware = 'cpu' 
         else: 
-            self._device = 'gpu'
+            self._hardware = 'gpu'
         self._build()
 
     def get_inputs(self, pipeline, **kwargs):
@@ -84,7 +84,7 @@ class TFRecordDataPipeline(InputPipelineCore):
                                       initial_fill=1024,
                                       random_shuffle=True, seed=123,
                                       stick_to_shard=True, pad_last_batch=True, 
-                                      dont_use_mmap=self._dont_use_mmap)
+                                      dont_use_mmap=self._dont_use_mmap, device=self._hardware)
         return dataset['image'], 0
 
 class ImageDataPipeline(InputPipelineCore):
@@ -103,15 +103,15 @@ class ImageDataPipeline(InputPipelineCore):
         super().__init__(batch_size, sample_count, device, 
                          build_now=False, threads=threads)
         if device is None:
-            self._device = 'cpu' 
+            self._hardware = 'cpu' 
         else: 
-            self._device = 'gpu'
+            self._hardware = 'gpu'
         self._build()
 
     def get_inputs(self, pipeline, **kwargs):
         images, labels = fn.readers.file(
             file_root=self._data_root_dir, random_shuffle=self._shuffle, 
-            name="Reader", dont_use_mmap=self._dont_use_mmap, device=self._device, 
+            name="Reader", dont_use_mmap=self._dont_use_mmap, device=self._hardware, 
             prefetch_queue_depth=64)
         images = fn.decoders.image_random_crop(
             images, device=self._device, output_type=types.RGB)
@@ -125,7 +125,7 @@ class ImageDataPipeline(InputPipelineCore):
             mirror=fn.random.coin_flip())
         return images, labels
 
-if args.device == 'gpu':
+if args.device.find('gpu')!=-1:
     device_id = 0
 else:
     device_id = None
@@ -133,11 +133,11 @@ if args.format=='png':
     sample_count = len(glob.glob(f"{data_root_dir}/*/*.png"))
     print(sample_count)
     train_data = ImageDataPipeline(data_root_dir = data_root_dir, batch_size = args.batch_size, 
-        device = device_id, sample_count = sample_count, dont_use_mmap = True, threads=args.dali_threads)
+        device = None, sample_count = sample_count, dont_use_mmap = True, threads=args.dali_threads)
 elif args.format=='tfrecord':
     sample_count = len(glob.glob(f"{data_root_dir}/data/*.tfrecord"))
     train_data = TFRecordDataPipeline(data_root_dir = f"{args.data_folder}/data/", index_root_dir = f"{args.data_folder}/index/", batch_size = args.batch_size, 
-        device = device_id, sample_count = sample_count, dont_use_mmap = True, threads=args.dali_threads)
+        device = None, sample_count = sample_count, dont_use_mmap = True, threads=args.dali_threads)
 
 for data in tqdm(dlp.iter(train_data)):
     x = data

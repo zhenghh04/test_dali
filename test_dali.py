@@ -29,7 +29,7 @@ BATCH_SIZE=args.batch_size
 # points to https://github.com/NVIDIA/DALI_extra
 data_root_dir = args.data_folder
 images_dir = data_root_dir
-dlp_logger = PerfTrace.initialize_log(logfile="trace.pfw",
+dlp_logger = PerfTrace.initialize_log(logfile=f"trace-{args.format}.pfw",
                         data_dir=data_root_dir,
                         process_id=0)
 import time

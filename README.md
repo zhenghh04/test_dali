@@ -16,4 +16,4 @@ DLIO_PROFILER_ENABLE=1 DLIO_PROFILER_INC_METADATA=1 python test_dali.py --data-f
 =${FORMAT}
 ```
 
-This will generate trace.pfw, which can be visualized by perfetto
+This will generate trace-${FORMAT}.pfw, which can be visualized by perfetto

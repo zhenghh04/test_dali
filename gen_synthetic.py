@@ -2,7 +2,7 @@
 # This is to generate fake imagenet dataset
 import numpy as np
 import os
-import tensorflow as tf
+
 from tqdm import tqdm
 from subprocess import call
 import argparse
@@ -31,6 +31,7 @@ if args.format=='png':
         img = cv2.merge((arr[2], arr[1], arr[0]))  # Use opencv to merge as b,g,r
         cv2.imwrite(f'{args.data_folder}/{i//num_samples_per_folder}/image%04d.png'%i, img)
 elif args.format=='tfrecord':
+    import tensorflow as tf    
     num_files = args.num_samples // args.num_samples_per_file
     os.makedirs(f"{args.data_folder}/data", exist_ok=True)
     os.makedirs(f"{args.data_folder}/index", exist_ok=True)

@@ -5,7 +5,7 @@ from nvidia.dali.plugin.pytorch import DALIGenericIterator
 import os
 import glob
 from tqdm import tqdm
-from dlio_profiler.logger import dlio_logger as PerfTrace, fn_interceptor as Profile
+from dftracer.logger import dftracer as PerfTrace, fn_interceptor as Profile
 from dali_core import InputPipelineCore
 from typing import Literal, List, Optional, Tuple
 import argparse

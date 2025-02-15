@@ -1,7 +1,8 @@
 import nvidia.dali.fn as fn
 import nvidia.dali.types as types
 from nvidia.dali.pipeline import Pipeline
-
+from dftracer.logger import dftracer as PerfTrace, fn_interceptor as Profile
+dlp = Profile("TEST_DALI")
 def create_dali_pipeline(
     data_dir, 
     batch_size=16, 
@@ -66,7 +67,7 @@ def main():
     num_samples = 100  # For demonstration, say we have 100 samples
     total_iterations = (num_samples + batch_size - 1) // batch_size
     
-    for iteration in range(total_iterations):
+    for iteration in dlp.iter(range(total_iterations)):
         # Run one iteration of the pipeline
         outputs = pipe.run()
         # outputs is a tuple/list of DALI tensors (images, labels)
